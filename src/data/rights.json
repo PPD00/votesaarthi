@@ -1,0 +1,27 @@
+[
+  {
+    "id": "RIGHT_1",
+    "title": "Right to Vote",
+    "description": "Every eligible citizen of India has the right to vote freely without any pressure or influence."
+  },
+  {
+    "id": "RIGHT_2",
+    "title": "Right to Secret Ballot",
+    "description": "Your vote is confidential. No one can force you to reveal whom you voted for."
+  },
+  {
+    "id": "RIGHT_3",
+    "title": "Right to Verify Your Name",
+    "description": "You have the right to check whether your name is included in the electoral roll."
+  },
+  {
+    "id": "RIGHT_4",
+    "title": "Right to Assistance",
+    "description": "Senior citizens and persons with disabilities can request assistance at polling stations."
+  },
+  {
+    "id": "RIGHT_5",
+    "title": "Right to Complain",
+    "description": "You can report any malpractice, fake voting, or irregularity to election authorities."
+  }
+]

@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* High Contrast Indian Civic Palette */
+  --saffron: #D97706; /* Darker saffron for WCAG compliance */
+  --saffron-light: #FF9933;
+  --saffron-dark: #B45309;
+  --white: #FFFFFF;
+  --green: #15803D; /* Darker green for WCAG compliance */
+  --green-light: #16A34A;
+  --green-dark: #166534;
+  --navy: #1E1B4B; /* Deep navy for text readability */
+  --navy-light: #312E81;
+  
+  /* UI Colors */
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --accent: #1D4ED8; /* Solid blue for better contrast */
+  --border: #CBD5E1;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  
+  --font-main: 'Outfit', sans-serif;
+}
+
+/* Accessibility Focus States */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.page-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+  color: var(--navy);
+}
+
+.page-loader p {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+  color: var(--accent);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.local-info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(37, 99, 235, 0.05);
+  color: var(--accent);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+}

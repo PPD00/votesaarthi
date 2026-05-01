@@ -1,0 +1,11 @@
+{
+  "number": "1950",
+  "label": "Election Helpline",
+  "description": "Call this number for any election-related queries or complaints.",
+  "recommendedFor": [
+    "Fake vote issues",
+    "Polling booth problems",
+    "Election malpractice",
+    "General assistance"
+  ]
+}

@@ -1,0 +1,235 @@
+.election-data-page {
+  padding-top: 2rem;
+}
+
+.data-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  background: white;
+  padding: 8px;
+  border-radius: 16px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  background: var(--bg-primary);
+}
+
+.tab-btn.active {
+  background: var(--navy);
+  color: white;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header h3 {
+  font-size: 1.5rem;
+  color: var(--navy);
+}
+
+.source-note {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Candidate Grid */
+.candidate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.candidate-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: transform 0.3s;
+  box-shadow: var(--shadow);
+}
+
+.candidate-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+
+.candidate-symbol {
+  font-size: 2.5rem;
+  width: 70px;
+  height: 70px;
+  background: var(--bg-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+}
+
+.candidate-info h4 {
+  font-size: 1.2rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.party-name {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.candidate-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Table Styles */
+.table-container {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table th {
+  background: var(--bg-primary);
+  padding: 1.2rem;
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  padding: 1.2rem;
+  border-top: 1px solid var(--border);
+  font-size: 1rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stats-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stats-year {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.stats-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.trend-icon {
+  color: var(--green);
+}
+
+.percentage {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.gender-split {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.gender-split span {
+  font-weight: 700;
+}
+
+.data-insight {
+  background: rgba(37, 99, 235, 0.05);
+  padding: 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--navy);
+  font-weight: 500;
+}
+
+.data-disclaimer {
+  margin-top: 4rem;
+  padding: 1.5rem;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .data-tabs {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .tab-btn {
+    flex: 1;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+}

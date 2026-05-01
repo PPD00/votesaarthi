@@ -1,0 +1,21 @@
+{
+  "election": "General Election",
+  "phases": [
+    {
+      "name": "Voter Registration",
+      "description": "Register yourself in the electoral roll before the deadline."
+    },
+    {
+      "name": "Verification",
+      "description": "Verify your voter details and polling information."
+    },
+    {
+      "name": "Voting Day",
+      "description": "Visit your assigned polling booth and cast your vote."
+    },
+    {
+      "name": "Counting & Results",
+      "description": "Votes are counted and results are announced."
+    }
+  ]
+}

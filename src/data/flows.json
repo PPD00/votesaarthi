@@ -1,0 +1,49 @@
+[
+  {
+    "intent": "ELIGIBILITY_CHECK",
+    "questions": [
+      {
+        "id": "age",
+        "question": "Are you 18 years or older?",
+        "type": "boolean"
+      },
+      {
+        "id": "citizenship",
+        "question": "Are you a citizen of India?",
+        "type": "boolean"
+      }
+    ],
+    "outcomes": {
+      "eligible": {
+        "message": "You are eligible to vote. Please ensure your name is registered in the voter list."
+      },
+      "not_eligible": {
+        "message": "You are not eligible to vote yet. You must be 18+ and a citizen of India."
+      }
+    }
+  },
+  {
+    "intent": "FAKE_VOTE_ISSUE",
+    "steps": [
+      "Stay calm and inform the polling officer immediately.",
+      "Request to file a complaint at the polling station.",
+      "Call the official election helpline (1950).",
+      "Provide your voter details for verification."
+    ],
+    "helplineRecommended": true
+  },
+  {
+    "intent": "POLLING_BOOTH_HELP",
+    "steps": [
+      "Check your voter slip or election ID card.",
+      "Visit the official voter portal or app.",
+      "Use your pincode to search for your polling booth.",
+      "Confirm location before voting day."
+    ],
+    "helplineRecommended": false
+  },
+  {
+    "intent": "VOTER_RIGHTS",
+    "action": "DISPLAY_RIGHTS"
+  }
+]
