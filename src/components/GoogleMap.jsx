@@ -1,39 +1,133 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Marker,
+  DirectionsRenderer,
+} from "@react-google-maps/api";
 
-const GoogleMap = ({ address }) => {
+const containerStyle = {
+  width: "100%",
+  height: "400px",
+  borderRadius: "20px",
+};
+
+const defaultCenter = {
+  lat: 28.6139,
+  lng: 77.2090,
+};
+
+const MapComponent = ({ address }) => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  
-  if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
-    return (
-      <div className="map-fallback-ui">
-        <div className="fallback-card">
-          <h3>Map Configuration Required</h3>
-          <p>To view the interactive polling booth map, please add your Google Maps API key to the <code>.env</code> file.</p>
-          <div className="env-tip">
-            <code>VITE_GOOGLE_MAPS_API_KEY=your_actual_key</code>
-          </div>
-          <p className="address-preview"><strong>Station Address:</strong> {address}</p>
-        </div>
-      </div>
-    );
+
+  const [boothLocation, setBoothLocation] = useState(defaultCenter);
+  const [userLocation, setUserLocation] = useState(null);
+  const [directions, setDirections] = useState(null);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: apiKey,
+  });
+
+  // 📍 Get booth location
+  useEffect(() => {
+    if (!window.google || !address) return;
+
+    const geocoder = new window.google.maps.Geocoder();
+
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const loc = results[0].geometry.location;
+        setBoothLocation({
+          lat: loc.lat(),
+          lng: loc.lng(),
+        });
+      }
+    });
+  }, [address]);
+
+  // 📍 Get user location
+  const handleMyLocation = () => {
+  if (!navigator.geolocation) {
+    alert("Geolocation not supported");
+    return;
   }
 
-  const encodedAddress = encodeURIComponent(address || 'Election Commission of India, New Delhi');
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodedAddress}&zoom=15`;
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const userLoc = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      console.log("User location:", userLoc);
+      console.log("Booth location:", boothLocation);
+
+      setUserLocation(userLoc);
+
+      // Wait a bit to ensure booth location is ready
+      setTimeout(() => {
+        const directionsService = new window.google.maps.DirectionsService();
+
+        directionsService.route(
+          {
+            origin: userLoc,
+            destination: boothLocation,
+            travelMode: window.google.maps.TravelMode.DRIVING,
+          },
+          (result, status) => {
+            console.log("Directions status:", status);
+
+            if (status === "OK") {
+              setDirections(result);
+            } else {
+              alert("Route not found: " + status);
+            }
+          }
+        );
+      }, 500);
+    },
+    () => alert("Unable to fetch location")
+  );
+};
+
+  if (!apiKey) return <p>API key missing</p>;
+  if (!isLoaded) return <p>Loading map...</p>;
 
   return (
-    <div className="google-map-wrapper animate-fade-in" style={{ width: '100%', height: '100%', minHeight: '400px' }}>
-      <iframe
-        title="Polling Booth Location"
-        width="100%"
-        height="100%"
-        style={{ border: 0, borderRadius: '20px' }}
-        src={mapUrl}
-        allowFullScreen
-        loading="lazy"
-      ></iframe>
+    <div>
+      <button
+        onClick={handleMyLocation}
+        style={{
+          marginBottom: "12px",
+          padding: "10px 16px",
+          borderRadius: "10px",
+          border: "none",
+          background: "linear-gradient(135deg, #2563eb, #1e40af)",
+          color: "white",
+          fontWeight: "600",
+          cursor: "pointer",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+        }}
+      >
+        📍 Find My Route to Booth
+      </button>
+
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={userLocation || boothLocation}
+        zoom={13}
+      >
+        {/* Booth */}
+        <Marker position={boothLocation} label="Booth" />
+
+        {/* User */}
+        {userLocation && <Marker position={userLocation} label="You" />}
+
+        {/* Route */}
+        {directions && <DirectionsRenderer directions={directions} />}
+      </GoogleMap>
     </div>
   );
 };
 
-export default GoogleMap;
+export default React.memo(MapComponent);
