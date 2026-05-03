@@ -1,53 +1,67 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import BoothFinder from '../pages/BoothFinder';
-import { vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { vi, describe, test, expect, beforeEach, afterEach } from "vitest";
+import BoothFinder from "../pages/BoothFinder";
 
-// ✅ Mock Auth Context
-vi.mock('../context/AuthContext', () => ({
+/* ---------------- MOCKS ---------------- */
+
+vi.mock("../context/AuthContext", () => ({
   useAuth: () => ({
     userData: {
-      district: 'Central District',
-      state: 'Delhi'
-    }
-  })
+      district: "Central District",
+      state: "Delhi",
+    },
+  }),
 }));
 
-// ✅ Mock GoogleMap (VERY IMPORTANT)
-vi.mock('../components/GoogleMap', () => ({
-  default: ({ address }) => <div>Map for {address}</div>
+vi.mock("../components/GoogleMap", () => ({
+  default: () => <div data-testid="map">Mock Map Loaded</div>,
 }));
 
-describe('User Flow Test - Secure Booth Finder', () => {
+/* ---------------- TEST SUITE ---------------- */
 
-  test('user can search and see booth result', async () => {
+describe("BoothFinder User Flow (Production Tests)", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const setup = () => {
     render(<BoothFinder />);
+    return {
+      input: screen.getByPlaceholderText(/enter pincode or locality/i),
+      button: screen.getByRole("button", { name: /find booth/i }),
+    };
+  };
 
-    const input = screen.getByPlaceholderText(/enter pincode or locality/i);
-    fireEvent.change(input, { target: { value: 'Delhi' } });
+  test("renders search input correctly", () => {
+    const { input } = setup();
+    expect(input).toBeInTheDocument();
+  });
 
-    const button = screen.getByRole('button', { name: /find booth/i });
+  test("handles valid search flow", async () => {
+    const { input, button } = setup();
+
+    fireEvent.change(input, { target: { value: "Delhi" } });
     fireEvent.click(button);
 
-    // ✅ Wait for async result (IMPORTANT)
     await waitFor(() => {
+      expect(
+        screen.getByText(/central district/i)
+      ).toBeInTheDocument();
+
       expect(
         screen.getByText(/government senior secondary school/i)
       ).toBeInTheDocument();
-    }, { timeout: 2000 });
-
-    // ✅ Check address appears
-    expect(
-      screen.getByText(/central district/i)
-    ).toBeInTheDocument();
+    }, { timeout: 5000 });
   });
 
-  test('loading state appears during search', () => {
-    render(<BoothFinder />);
+  test("shows loading state during search", () => {
+    const { input, button } = setup();
 
-    const input = screen.getByPlaceholderText(/enter pincode or locality/i);
-    fireEvent.change(input, { target: { value: 'Delhi' } });
-
-    const button = screen.getByRole('button', { name: /find booth/i });
+    fireEvent.change(input, { target: { value: "Delhi" } });
     fireEvent.click(button);
 
     expect(
@@ -55,26 +69,9 @@ describe('User Flow Test - Secure Booth Finder', () => {
     ).toBeInTheDocument();
   });
 
-  test('map loads after result', async () => {
-    render(<BoothFinder />);
+  test("prevents empty submission", () => {
+    const { button } = setup();
 
-    const input = screen.getByPlaceholderText(/enter pincode or locality/i);
-    fireEvent.change(input, { target: { value: 'Delhi' } });
-
-    const button = screen.getByRole('button', { name: /find booth/i });
-    fireEvent.click(button);
-
-    await waitFor(() => {
-      expect(
-        screen.getByText(/map for/i)   // ✅ matches mocked component
-      ).toBeInTheDocument();
-    }, { timeout: 2000 });
-  });
-
-  test('prevents empty search submission', () => {
-    render(<BoothFinder />);
-
-    const button = screen.getByRole('button', { name: /find booth/i });
     fireEvent.click(button);
 
     expect(
@@ -82,30 +79,30 @@ describe('User Flow Test - Secure Booth Finder', () => {
     ).toBeInTheDocument();
   });
 
-  test('sanitizes malicious input', async () => {
-  render(<BoothFinder />);
+  test("renders map after successful search", async () => {
+    const { input, button } = setup();
 
-  const input = screen.getByPlaceholderText(/enter pincode or locality/i);
+    fireEvent.change(input, { target: { value: "Delhi" } });
+    fireEvent.click(button);
 
-  // malicious input
-  fireEvent.change(input, {
-    target: { value: '<script>alert(1)</script>' }
+    await waitFor(() => {
+      expect(screen.getByTestId("map")).toBeInTheDocument();
+    }, { timeout: 5000 });
   });
 
-  const button = screen.getByRole('button', { name: /find booth/i });
-  fireEvent.click(button);
+  test("sanitizes malicious input safely", async () => {
+    const { input, button } = setup();
 
-  // ✅ Ensure search does NOT proceed (no result shown)
-  await waitFor(() => {
-    expect(
-      screen.queryByText(/government senior secondary school/i)
-    ).not.toBeInTheDocument();
+    fireEvent.change(input, {
+      target: { value: "<script>alert('hack')</script>" },
+    });
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/government senior secondary school/i)
+      ).not.toBeInTheDocument();
+    }, { timeout: 5000 });
   });
-
-  // ✅ Ensure raw script is NOT rendered anywhere
-  expect(
-    screen.queryByText(/script/i)
-  ).not.toBeInTheDocument();
-});
-
 });

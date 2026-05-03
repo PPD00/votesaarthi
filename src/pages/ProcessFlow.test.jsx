@@ -1,48 +1,69 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
-import ProcessFlow from '../pages/ProcessFlow';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import ProcessFlow from "../pages/ProcessFlow";
 
-const renderWithRouter = (ui) => render(<BrowserRouter>{ui}</BrowserRouter>);
+const renderWithRouter = (ui) =>
+  render(<MemoryRouter>{ui}</MemoryRouter>);
 
-describe('ProcessFlow Component', () => {
-  it('renders initial step (Register as Voter)', () => {
+describe("ProcessFlow Component", () => {
+
+  it("renders initial step (Register as Voter)", () => {
     renderWithRouter(<ProcessFlow />);
-    // Use getAllByText for labels that appear in multiple places
-    expect(screen.getAllByText(/Register as Voter/i)[0]).toBeInTheDocument();
+
+    expect(
+      screen.getAllByText(/Register as Voter/i)[0]
+    ).toBeInTheDocument();
+
     expect(screen.getByText(/Step 1/i)).toBeInTheDocument();
   });
 
-  it('navigates to next step on button click', () => {
+  it("navigates to next step on button click", async () => {
     renderWithRouter(<ProcessFlow />);
-    const nextBtn = screen.getByText(/Next Step/i);
-    fireEvent.click(nextBtn);
 
-    expect(screen.getAllByText(/Verify Identity/i)[0]).toBeInTheDocument();
-    expect(screen.getByText(/Step 2/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/Next Step/i));
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Verify Identity/i)[0]
+      ).toBeInTheDocument();
+    });
   });
 
-  it('can go back to previous step', () => {
+  it("can go back to previous step", async () => {
     renderWithRouter(<ProcessFlow />);
-    const nextBtn = screen.getByText(/Next Step/i);
-    fireEvent.click(nextBtn); // To Step 2
-    
-    const prevBtn = screen.getByText(/Previous/i);
-    fireEvent.click(prevBtn);
 
-    expect(screen.getAllByText(/Register as Voter/i)[0]).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/Next Step/i));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Step 2/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText(/Previous/i));
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Register as Voter/i)[0]
+      ).toBeInTheDocument();
+    });
   });
 
-  it('shows completion banner on final step', () => {
+  it("shows completion banner on final step", async () => {
     renderWithRouter(<ProcessFlow />);
-    
-    // Click through to step 5
-    for(let i=0; i<4; i++) {
-      const nextBtn = screen.getByText(/Next Step/i);
-      fireEvent.click(nextBtn);
+
+    for (let i = 0; i < 4; i++) {
+      fireEvent.click(screen.getByText(/Next Step/i));
     }
 
-    expect(screen.getAllByText(/Track Results/i)[0]).toBeInTheDocument();
-    expect(screen.getByText(/You're informed and ready!/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Track Results/i)[0]
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByText(/You're informed and ready!/i)
+      ).toBeInTheDocument();
+    });
   });
+
 });

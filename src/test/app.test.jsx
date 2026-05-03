@@ -1,6 +1,17 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import App from "../App";
 
-test("app renders without crashing", () => {
-  render(<App />);
+describe("App", () => {
+  it("renders without crashing", () => {
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
+
+    // safe generic check (avoids route dependency issues)
+    expect(document.body).toBeInTheDocument();
+  });
 });
