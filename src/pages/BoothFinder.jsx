@@ -1,6 +1,7 @@
 import React, { useState, Suspense, lazy, useEffect, useRef } from 'react';
-import { Search, MapPin, Navigation, Info, Compass, Loader2, ExternalLink } from 'lucide-react';
+import { Search, MapPin, Navigation, Info, Compass, Loader2, ExternalLink, Sparkles, MessageSquare } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { sendMessageToAI } from '../services/aiService';
 import './boothFinder.css';
 
 // Lazy load map safely
@@ -13,7 +14,11 @@ const BoothFinder = () => {
   const [searching, setSearching] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [result, setResult] = useState(null);
-  const [error, setError] = useState(''); // ✅ NEW
+  const [error, setError] = useState('');
+  
+  // 🔥 AI Verification State
+  const [aiResponse, setAiResponse] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   const timeoutRef = useRef(null);
 
@@ -161,6 +166,20 @@ setResult({
     handleSearch({ preventDefault: () => {} });
   };
 
+  // 🔥 AI Test Handler
+  const handleTestAI = async () => {
+    setIsAiLoading(true);
+    setAiResponse('');
+    try {
+      const reply = await sendMessageToAI("Who can vote in India?");
+      setAiResponse(reply);
+    } catch (err) {
+      setAiResponse("Verification failed: " + err.message);
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   // Safe Google Maps URL
   const getSafeMapUrl = () => {
     if (!result?.address) return '#';
@@ -295,6 +314,32 @@ setResult({
             >
               {result?.address && <GoogleMap address={result.address} />}
             </Suspense>
+          )}
+        </div>
+      </div>
+
+      <div className="ai-verification-section">
+        <div className="ai-card">
+          <div className="ai-card-header">
+            <Sparkles className="icon-sparkle" size={20} />
+            <h3>AI Verification (Phase 2)</h3>
+          </div>
+          <p>Verify end-to-end connectivity with the Gemini AI backend.</p>
+          
+          <button 
+            className="btn btn-secondary" 
+            onClick={handleTestAI}
+            disabled={isAiLoading}
+          >
+            {isAiLoading ? <Loader2 className="spin-icon" size={18} /> : <MessageSquare size={18} />}
+            {isAiLoading ? 'Thinking...' : 'Test Gemini AI'}
+          </button>
+
+          {aiResponse && (
+            <div className="ai-response-box animate-fade-in">
+              <strong>Gemini Response:</strong>
+              <p>{aiResponse}</p>
+            </div>
           )}
         </div>
       </div>

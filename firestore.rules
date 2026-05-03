@@ -2,61 +2,84 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // --- GLOBAL DEFAULTS ---
+    // Strictly deny all access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REUSABLE FUNCTIONS ---
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDataOwner() {
+      return isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    function isRequestOwner() {
+      return isAuthenticated() && request.resource.data.userId == request.auth.uid;
+    }
+
+    // --- USERS COLLECTION ---
     match /users/{userId} {
+      allow read: if isOwner(userId);
+      
+      // Strict schema validation for Create and Update
+      allow create, update: if isOwner(userId)
+        && request.resource.data.keys().hasOnly([
+          'name', 
+          'email', 
+          'state', 
+          'district', 
+          'language', 
+          'voiceEnabled', 
+          'lastBoothSearch', 
+          'createdAt', 
+          'updatedAt'
+        ])
+        && !request.resource.data.keys().hasAny([
+          'password', 
+          'aadhaar', 
+          'pan', 
+          'ssn'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.email is string;
+    }
 
-      // ✅ Common function: check if user is authenticated & owner
-      function isOwner() {
-        return request.auth != null && request.auth.uid == userId;
-      }
+    // --- BOOTHS COLLECTION ---
+    // Public read-only access for election station data
+    match /booths/{boothId} {
+      allow read: if true;
+      allow write: if false; // Only server/admin can modify
+    }
 
-      // ✅ Allowed fields only (strict schema)
-      function hasValidFields() {
-        return request.resource.data.keys().hasOnly([
-          'name',
-          'email',
-          'state',
-          'district',
-          'language',
-          'createdAt'
-        ]);
-      }
+    // --- AI_LOGS COLLECTION ---
+    match /ai_logs/{logId} {
+      // Users can append their own history but never edit or delete it
+      allow create: if isRequestOwner();
+      allow read: if isDataOwner();
+      allow update, delete: if false;
+    }
 
-      // ❌ Block sensitive fields completely
-      function hasNoSensitiveData() {
-        return !request.resource.data.keys().hasAny([
-          'aadhaar',
-          'ssn',
-          'pan',
-          'pan_full',
-          'password'
-        ]);
-      }
+    // --- BOOTH_SEARCHES COLLECTION ---
+    match /booth_searches/{searchId} {
+      // Analytics tracking - Create and Read only by owner
+      allow create: if isRequestOwner();
+      allow read: if isDataOwner();
+      allow update, delete: if false;
+    }
 
-      // ✅ Basic data validation
-      function isValidData() {
-        return request.resource.data.state is string
-          && request.resource.data.language is string
-          && request.resource.data.state.size() > 0
-          && request.resource.data.language.size() > 0;
-      }
-
-      // ✅ CREATE
-      allow create: if isOwner()
-                    && hasValidFields()
-                    && hasNoSensitiveData()
-                    && isValidData();
-
-      // ✅ READ
-      allow read: if isOwner();
-
-      // ✅ UPDATE (prevent adding new unwanted fields later)
-      allow update: if isOwner()
-                    && hasValidFields()
-                    && hasNoSensitiveData()
-                    && isValidData();
-
-      // ✅ DELETE (optional, keep if needed)
-      allow delete: if isOwner();
+    // --- NOTIFICATIONS COLLECTION ---
+    match /notifications/{notificationId} {
+      // In-app alerts - Read only by owner, client cannot write
+      allow read: if isDataOwner();
+      allow write: if false; // Strict server-side creation only
     }
   }
 }

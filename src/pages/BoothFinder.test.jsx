@@ -1,3 +1,28 @@
+beforeAll(() => {
+  window.google = {
+    maps: {
+      Geocoder: class {
+        geocode(_, callback) {
+          callback(
+            [
+              {
+                geometry: {
+                  location: {
+                    lat: () => 28.6139,
+                    lng: () => 77.2090,
+                  },
+                },
+              },
+            ],
+            "OK"
+          );
+        }
+      },
+    },
+  };
+});
+
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
@@ -46,22 +71,22 @@ describe('BoothFinder Component', () => {
     const input = screen.getByPlaceholderText(/Enter Pincode or Locality/i);
     const searchBtn = screen.getByText(/Find Booth/i);
 
-    fireEvent.change(input, { target: { value: '110001' } });
+    fireEvent.change(input, { target: { value: 'Ghaziabad' } });
     fireEvent.click(searchBtn);
 
     expect(screen.getByText(/Locating the nearest booth/i)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText(/Government Senior Secondary School/i)).toBeInTheDocument();
+      expect(screen.getByText(/Govt Inter College/i)).toBeInTheDocument();
     }, { timeout: 2000 });
 
-    expect(screen.getByText(/110001, Central District, Delhi/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ghaziabad, Central District, Delhi/i)).toBeInTheDocument();
   });
 
   it('shows interactive map button after search', async () => {
     renderWithProviders(<BoothFinder />);
     const input = screen.getByPlaceholderText(/Enter Pincode or Locality/i);
-    fireEvent.change(input, { target: { value: '110001' } });
+    fireEvent.change(input, { target: { value: 'Ghaziabad' } });
     fireEvent.click(screen.getByText(/Find Booth/i));
 
     await waitFor(() => {
