@@ -48,7 +48,8 @@
 //     return res.status(500).json({ error: "Gemini API failed" });
 //   }
 // });
-
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const { onRequest } = require("firebase-functions/v2/https");
 

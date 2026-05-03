@@ -217,75 +217,8 @@
   }
 }
 
-.ai-verification-section {
+
+.booth-ai-section {
   margin-top: 3rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.ai-card {
-  background: #f0f7ff;
-  border: 1px solid #c0d9f9;
-  border-radius: 20px;
-  padding: 2rem;
-  text-align: center;
-}
-
-.ai-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 1rem;
-  color: var(--navy);
-}
-
-.ai-card p {
-  color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-}
-
-.icon-sparkle {
-  color: var(--saffron);
-}
-
-.ai-response-box {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: 12px;
-  text-align: left;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.ai-response-box strong {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--navy);
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.ai-response-box p {
-  margin-bottom: 0;
-  color: var(--text-primary);
-  line-height: 1.6;
-}
-
-.btn-secondary {
-  background: white;
-  color: var(--navy);
-  border: 2px solid var(--navy);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 auto;
-}
-
-.btn-secondary:hover {
-  background: var(--navy);
-  color: white;
+  width: 100%;
 }
